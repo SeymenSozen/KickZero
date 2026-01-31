@@ -16,3 +16,8 @@ env/
 
 # Log dosyaları
 *.log
+
+# Paketleme ve İnşa dosyaları
+build/
+dist/
+*.egg-info/
