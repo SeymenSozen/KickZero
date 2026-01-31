@@ -1,0 +1,18 @@
+#Test Dosyaları
+Zoro.py
+*.todo
+
+# Python önbellek dosyaları
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Sanal ortam klasörleri
+venv/
+env/
+
+# Gizli bilgiler (Varsa .env dosyan)
+.env
+
+# Log dosyaları
+*.log

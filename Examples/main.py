@@ -1,50 +1,82 @@
 import asyncio
-from KickZero import KickBot  # Hazırladığımız modülü içe aktarıyoruz
+import random
+from KickZero import KickBot
 
-# --- AYARLAR ---
-# GitHub'a yüklerken buraları boş bırakmayı unutma!
-USER_NAME = "BOT_KULLANICI_ADI"
-APP_KEY = "KICK_APP_KEY" # Pusher App Key
-CLUSTER = "Cluster Seçimi"          # Genelde us2 olur
-CHAT_ID = "KANAL ID NUMARAN"     # Kanal ID numaran
-TOKEN = "BEARER_TOKEN"   # Edge'den aldığın token (Bearer yazmana gerek yok, modül ekliyor)
-
-# Botu oluşturuyoruz
-bot = KickBot(
-    user_name=USER_NAME,
-    app_key=APP_KEY,
-    cluster=CLUSTER,
-    chat_id=CHAT_ID,
-    bearer_token=TOKEN,
+# --- BOT AYARLARI ---
+# Not: Bilgilerinizi buraya girmeyi unutmayın!
+Zoro = KickBot(
+    user_name="BOT_ADINIZ",
+    app_key="PUSHER_KEY",
+    cluster="us2",
+    chat_id="KANAL_ID",
+    bearer_token="Bearer TOKEN_BURAYA",
     prefix="!",
-    live_chat=True # Konsolda mesajları görmek için True kalsın
+    live_chat=True
 )
 
-# --- KOMUTLAR ---
+# --- 1. KOMUTLAR (@Zoro.command) ---
+# Prefix ile tetiklenen fonksiyonlar (örn: !zar).
 
-@bot.command(name="selam")
-async def selamla(ctx, args):
-    """Basit bir selamlaşma komutu"""
-    await ctx.reply("Aleykümselam! Zoro nöbette! ⚔️")
-
-@bot.command(name="zar")
+@Zoro.command(name="zar")
 async def zar_at(ctx, args):
-    """1-6 arası rastgele sayı atar"""
-    import random
+    """🎲 Rastgele sayı atar."""
     sayi = random.randint(1, 6)
-    await ctx.reply(f"🎲 {sayi} attın!")
+    await ctx.reply(f"Zar atıldı: {sayi}")
 
-# --- ETKİNLİKLER (EVENTS) ---
+@Zoro.command(name="say")
+async def soyle(ctx, args):
+    """🗣️ Yazdığınız kelimeleri bota söyletir."""
+    mesaj = " ".join(args) if args else "Ne dememi istersin kaptan?"
+    await ctx.reply(mesaj)
 
-@bot.on_message()
-async def her_mesaj(ctx):
-    """Gelen her mesajı yakalar (Botun kendi mesajları hariç)"""
-    if "zoro" in ctx.content.lower():
-        print(f"🔔 Birisi Zoro'dan bahsetti: {ctx.author}")
+# --- 2. ÖZEL MESAJ TEPKİLERİ (@Zoro.message) ---
+# Prefix olmadan belirli kelimelere tepki verir.
+
+@Zoro.message(content="sa", exact=True)
+async def selam(ctx):
+    """Sadece 'sa' yazıldığında tetiklenir."""
+    await ctx.reply("Aleykümselam hoş geldin!")
+
+@Zoro.message(content="zoro", exact=False)
+async def zoro_nida(ctx):
+    """Cümle içinde 'zoro' geçtiği her an tetiklenir."""
+    await ctx.reply("Biri kılıç ustasını mı çağırdı? ⚔️")
+
+# --- 3. ZAMANLANMIŞ GÖREVLER (@Zoro.timer_task) ---
+# v1.1 Yeni Özelliği: Belirli aralıklarla arka planda çalışır.
+
+@Zoro.timer_task(minutes=5)
+async def otomatik_duyuru(ctx):
+    """Her 5 dakikada bir chate rastgele duyuru atar."""
+    duyurular = [
+        "⚓ Yayını beğenmeyi unutmayın!",
+        "🏴‍☠️ Discord sunucumuza bekleriz!",
+        "🍶 Zoro sake içmeye gitti, hemen gelecek."
+    ]
+    await ctx.send_message(random.choice(duyurular))
+
+@Zoro.timer_task(hours=1)
+async def saatlik_hatirlatici():
+    """Parametresiz (ctx olmadan) kullanım örneği."""
+    print("⏰ Bir saatlik yayın süresi doldu!")
+
+# --- 4. ETKİNLİKLER (EVENTS) ---
+
+@Zoro.on_ready()
+async def hazirim():
+    """Bot bağlandığında çalışır."""
+    print(f"{Zoro.user_name} v1.1 limandan ayrılmaya hazır! ⚔️")
+
+@Zoro.on_message()
+async def log_kaydi(ctx):
+    """Her mesajda terminale log basar."""
+    if not ctx.author.lower() == Zoro.user_name:
+        print(f"📁 Kayıt: {ctx.author} -> {ctx.content}")
 
 # --- BAŞLATICI ---
 if __name__ == "__main__":
     try:
-        asyncio.run(bot.start())
+        # v1.1 Başlatıcı: Pylance hatalarını önleyen en stabil yöntem
+        asyncio.run(Zoro.start())
     except KeyboardInterrupt:
         print("\n⚔️ Zoro kınına geri dönüyor... (Bot kapatıldı)")
