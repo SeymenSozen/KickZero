@@ -1,0 +1,5 @@
+recursive-exclude Tests *
+recursive-exclude test *
+exclude .gitignore
+exclude *.pyc
+global-exclude *.todo
