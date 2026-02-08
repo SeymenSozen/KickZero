@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="KickZero",
-    version="1.1.1",
+    version="1.2",
     author="Seymen Sözen",
     description="Kick.com için gelişmiş ve kolay kullanımlı bot framework'ü",
     long_description=open("README.md", encoding="utf-8").read(), # Buraya encoding="utf-8" ekledik
