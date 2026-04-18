@@ -1,0 +1,16 @@
+pip.key
+backup/*
+test/*
+*/__pycache__/*
+app.py 
+PointsServer.py
+*.todo
+# --- 📦 Paketleme Kalıntıları ---
+build/
+dist/
+*.egg-info/
+
+# --- 🐍 Python Geçici Dosyaları ---
+__pycache__/
+*.py[cod]
+*$py.class

@@ -1,0 +1,36 @@
+# --- ANA DOSYALAR ---
+include LICENSE
+include README.md
+include MANIFEST.in
+
+# --- ÖRNEKLER ---
+# Kullanıcıların botu nasıl kuracağını öğrenmesi için şart
+recursive-include examples *.py
+
+# --- ANA MOTOR ---
+# Framework'ün kalbi (__init__.py) burada, kesinlikle dahil
+recursive-include kickzero *.py
+
+# --- 🚫 DIŞLANANLAR (SAKIN ALMA!) ---
+# 1. Özel Doğrulama Verileri (İsteğin üzerine çıkarıldı ⚓)
+exclude verification.json
+exclude verified.md
+
+# 2. Test Sahası
+# Dağınık notlar ve test dosyaları dışarıda
+recursive-exclude test *
+recursive-exclude * test_*.py
+
+# 3. Kişisel Notlar ve Anahtarlar
+exclude pip.key
+exclude Zoro.todoo
+
+# 4. Sistem Çöpleri
+recursive-exclude * __pycache__
+recursive-exclude * *.py[cod]
+recursive-exclude * *$py.class
+
+# --- 🛡️ GİZLİLİK KALKANI ---
+# Tarayıcı oturumları ve gizli ayarlar asla sızmamalı
+recursive-exclude kick_session *
+recursive-exclude .env *
