@@ -14,3 +14,7 @@ dist/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# --- Debug ---
+Zoro.py
+*.json

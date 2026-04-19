@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="kickzero",
-    version="1.3.1",
+    version="1.3.2",
     author="Seymen Sözen",
     description="A modular and asynchronous framework for Kick.com chatbots.",
     long_description=long_description,

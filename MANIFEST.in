@@ -2,7 +2,7 @@
 include LICENSE
 include README.md
 include MANIFEST.in
-
+include CHANGELOG.md
 # --- ÖRNEKLER ---
 # Kullanıcıların botu nasıl kuracağını öğrenmesi için şart
 recursive-include examples *.py
@@ -34,3 +34,7 @@ recursive-exclude * *$py.class
 # Tarayıcı oturumları ve gizli ayarlar asla sızmamalı
 recursive-exclude kick_session *
 recursive-exclude .env *
+
+# --- Debug ---
+exclude Zoro.py
+exclude *.json

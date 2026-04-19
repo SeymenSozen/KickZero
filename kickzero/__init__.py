@@ -111,6 +111,8 @@ class zerror:
             color = Fore.WHITE
         print(f"{color}{emoji}{Style.BRIGHT}[{level_text.upper()}] {Fore.WHITE}{message}{Style.RESET_ALL}")
 
+
+### Runners
 class tasks: 
     """
     ### 🇹🇷 [TR] Görev ve Rutin Yöneticisi
@@ -174,7 +176,6 @@ class tasks:
                     level="succ", 
                     msg_tr=f"Bot {bot.user_name} adıyla giriş yaptı ve filodaki {len(bot.channels)} kanalı dinliyor!", 
                     msg_en=f"Bot logged in as {bot.user_name} and listening to {len(bot.channels)} channels in the fleet!")
-
 class engine:
     """
     ### 🇹🇷 [TR] WebSocket ve Bağlantı Motoru
@@ -218,9 +219,20 @@ class engine:
       listens to parse the event type and routes it to the specific processor.)
     """
     @staticmethod
-    def connect(bot):
-        websocket = websockets.connect(uri=f"wss://ws-{bot.cluster}.pusher.com/app/{bot.app_key}?protocol=7&client=js&version=7.6.0")
-        return websocket
+    async def connect(bot:'kickbot'):
+        while True:
+            try:
+                websocket = await websockets.connect(f"wss://ws-{bot.cluster}.pusher.com/app/{bot.app_key}?protocol=7&client=js&version=7.6.0", open_timeout=30)
+                return websocket
+            except (asyncio.TimeoutError, websockets.exceptions.InvalidHandshake, websockets.exceptions.ConnectionClosed):
+                zerror.log(level="warning", msg_tr="Bağlantı zaman aşımına uğradı veya el sıkışma başarısız. 5sn sonra tekrar deneniyor...")
+                await asyncio.sleep(5)
+                continue
+            except Exception as e:
+                zerror.log(level="error", msg_tr=f"Beklenmedik bir hata oluştu: {e}")
+                await asyncio.sleep(5)
+
+
     @staticmethod
     async def subscribe_to_chatroom(ch, websocket):
         await websocket.send(json.dumps({ "event": "pusher:subscribe","data": {"channel": f"chatrooms.{ch.chat_id}.v2"}})) # Mod actions ve chat   
@@ -260,7 +272,6 @@ class engine:
             await processor.process_channel_points(bot,raw_data)
         elif data.get("event") == "pusher:ping":
             await engine.keep_alive(bot,websocket)
-
 class processor:
     """
     ### 🇹🇷 [TR] Veri İşleme ve Olay Dağıtıcı (Event Dispatcher)
@@ -357,7 +368,7 @@ class processor:
             asyncio.create_task(processor.execute(config["func"], rctx, []))
         zerror.log(level="succ", msg=log_msg)
 
-### contexts
+### Contexts
 class message_context:
     """
     ### 🇹🇷 [TR] Bağlam Merkezi (context)
@@ -1006,8 +1017,9 @@ class kickbot:
             zerror.log(level="succ", msg_tr=f"KickZero Framework Aktif! (Kaptan: {self.user_name})", msg_en=f"KickZero Framework Active! (Captain: {self.user_name})")
             while True:
                 try:
-                    async with engine.connect(self) as websocket:
+                    async with await engine.connect(self) as websocket:
                         await engine.subscribe_all(self,websocket)
+                        await asyncio.sleep(0.01)
                         while True:
                             await engine.process_all_events(self,websocket)
 
@@ -1036,3 +1048,5 @@ class kickbot:
             zerror.log(level="error", 
                        msg_tr=f"Bot başlatılırken beklenmedik bir hata: {e}", 
                        msg_en=f"Unexpected error while starting the bot: {e}")
+
+# Luffy Was Here
