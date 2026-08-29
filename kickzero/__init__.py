@@ -14,7 +14,7 @@ if "kickzero" not in sys.modules:
     sys.modules["kickzero"] = sys.modules[__name__]
 
 __all__ = ['kickbot', 'message_context', 'decorators']
-
+__version__ = "1.3.3"
 class zerror:
     """
     ### 🇹🇷 [TR] Hata ve Log Yöneticisi (Error Logger)
@@ -357,15 +357,16 @@ class processor:
     async def process_channel_points(bot:'kickbot',raw_data):
         data = json.loads(raw_data)
         rctx = points_context(data,bot)
-        ### Log
-        log_msg = f"{Fore.MAGENTA}{rctx.username}{Fore.WHITE}, {Fore.GREEN}'{rctx.title}'{Fore.WHITE} ödülünü kullandı! {Fore.BLACK}(Kanal: {rctx.channel})"
+        log_msg = f"{Fore.MAGENTA}{rctx.username}{Fore.WHITE}, {Fore.GREEN}'{rctx.title}'{Fore.WHITE} ödülünü kullandı! {Fore.BLACK}(Kanal: {rctx.channel.name if rctx.channel else rctx.channel_id})"
         if rctx.input:
             log_msg += f" {Fore.CYAN}(Mesaj: {rctx.input})"
-        ## Dedektör Taraması
         title_lower = rctx.title.lower()
-        reward_configs = bot._reward_handlers.get(title_lower, [])
-        for config in reward_configs:
+        specific_configs = bot._reward_handlers.get(title_lower, [])
+        global_configs = bot._reward_handlers.get("__global_rewards__", [])
+        all_configs = specific_configs + global_configs
+        for config in all_configs:
             asyncio.create_task(processor.execute(config["func"], rctx, []))
+            
         zerror.log(level="succ", msg=log_msg)
 
 ### Contexts
@@ -671,12 +672,13 @@ class decorators:
         return Decorator
     ## ⚓
     @classmethod
-    def on_rewards_redemption(cls,title:str):
+    def on_rewards_redemption(cls, title: str = None):
         def Decorator(fx: Callable):
-            title_lower = title.lower()
-            if title_lower not in kickbot._reward_handlers:
-                kickbot._reward_handlers[title_lower] = []
-            kickbot._reward_handlers[title_lower].append({"func":fx})
+            # Eğer title yoksa genel ödüller için özel bir anahtar kullan
+            target_key = title.lower() if title else "__global_rewards__"
+            if target_key not in kickbot._reward_handlers:
+                kickbot._reward_handlers[target_key] = []
+            kickbot._reward_handlers[target_key].append({"func": fx})
             return fx 
         return Decorator
  
@@ -866,7 +868,11 @@ class kickbot:
     
     """"""
 
-    def on_rewards_redemption(self,title:str):
+    def on_rewards_redemption(self, title: str = None):
+        """
+        ### 🇹🇷 [TR] Kanal Ödülü İzleyici Kaydedici
+        Belirli bir kanal ödülü kullanıldığında (veya title boş bırakılırsa tüm ödüllerde) tetiklenir.
+        """
         return decorators.on_rewards_redemption(title=title)
 
    

@@ -4,6 +4,12 @@ Tüm önemli değişiklikler bu dosyada belgelenecektir.
 
 ---
 
+## [1.3.3] - 2026-08-29 🏴‍☠️
+
+### 💎 Kanal Ödülü ve Esneklik Güncellemesi
+- **Esnek Ödül Dinleyicileri:** `@bot.on_rewards_redemption()` dekoratörüne opsiyonel `title` desteği eklendi. Başlık belirtilmediğinde fonksiyonlar genel (catch-all) modda çalışarak tetiklenen her kanal ödülünü yakalayacak şekilde güncellendi.
+- **Global Ödül Yönlendirmesi:** `processor.process_channel_points` metoduna, belirli bir ödül adına bağlı kalan yapıların yanına tüm ödülleri dinleyen ortak havuz (`__global_rewards__`) desteği entegre edildi.
+- **Paket Sürüm Altyapısı:** Modülün kök dizinine ve paket konfigürasyonuna `__version__ = "1.3.3"` tanımlaması eklenerek sürüm takibi kolaylaştırıldı.
 ## [1.3.2] - 2026-04-19 🏴‍☠️
 
 ### ⚓ Bağlantı ve Stabilite (Kritik Güncelleme)

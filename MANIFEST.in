@@ -18,9 +18,9 @@ exclude verified.md
 
 # 2. Test Sahası
 # Dağınık notlar ve test dosyaları dışarıda
-recursive-exclude test *
+recursive-exclude tests *
 recursive-exclude * test_*.py
-
+recursive-exclude venv *
 # 3. Kişisel Notlar ve Anahtarlar
 exclude pip.key
 exclude Zoro.todoo

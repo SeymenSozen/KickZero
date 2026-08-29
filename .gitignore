@@ -5,6 +5,7 @@ test/*
 app.py 
 PointsServer.py
 *.todo
+venv
 # --- 📦 Paketleme Kalıntıları ---
 build/
 dist/
